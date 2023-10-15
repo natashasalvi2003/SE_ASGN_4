@@ -425,6 +425,8 @@ number *multiply(number *a, number *b)
         result->sign=MINUS;
     return result;
 }
+
+
 number *power(number *a,number*b)
 {
     int temp;
@@ -510,6 +512,90 @@ number *divide(number *a, number *b)
     else if(s==-1)
         quotient->sign=MINUS;
     return quotient;
+}
+
+number *divide2(number *m, number *n)
+{
+    if(zeroNumber(*n) == 0) {
+		printf("Dividing by Zero is not allowed.\n");
+		return NULL; 
+	}
+	zeroRemov(m);
+	zeroRemov(n);
+	
+	int k = m->dec > n->dec ? m->dec : n->dec;
+	int i = 0;
+	
+	while(i < k) {
+		if(m->dec > 0)
+			m->dec--;
+		else
+			addDigit(m, '0');
+		if(n->dec > 0)
+			n->dec--;
+		else
+			addDigit(n, '0');
+		i++;
+	}
+	i = 9;
+	number *c, *d, *ans, *q, *pro;
+	c = (number *)malloc(sizeof(number));
+	d = (number *)malloc(sizeof(number));
+	ans = (number *)malloc(sizeof(number));
+	pro = (number *)malloc(sizeof(number));
+	q = (number *)malloc(sizeof(number));
+	
+	initNumber(ans);
+	initNumber(c);
+	initNumber(q);
+	initNumber(d);
+	if(m->sign == n->sign) {
+		q->sign = PLUS;
+		m->sign = n->sign = PLUS;
+	}
+	else {
+		q->sign = MINUS;
+		m->sign = n->sign = PLUS;
+	}
+	node *p = m->first;
+	char ch = p->n + '0';
+	addDigit(d, ch);
+	while(q->dec < SCALE){
+		while(i >= 0){	
+			appendleft(c, i);
+			pro = mult(n, c);
+			ans = sub(d, pro);	
+			if(ans->sign != MINUS) {
+				addDigit(q, i + '0');
+				node *tmp = c->first;
+				free(tmp);
+				c->last = c->last = NULL;
+				break;
+			}
+			else{
+				node *tmp = c->first;
+				free(tmp);
+				c->first = c->last = NULL;
+				i--; 
+			}
+		}
+		d = ans;
+		if(p->next != NULL) {
+			p = p->next;
+			ch = p->n + '0';
+			addDigit(d, ch);
+		}
+		else{	
+			q->dec++;	
+			addDigit(d, '0');
+		}
+		i = 9;
+		node *tmp = c->first;
+		free(tmp);
+		c->first = c->last = NULL;
+	}
+	q->dec--;
+	return q;
 }
 
 number *mod(number *a, number *b)
