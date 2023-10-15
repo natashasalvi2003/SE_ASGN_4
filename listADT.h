@@ -10,7 +10,7 @@ typedef struct node
 
 typedef struct number
 {
-    int sign;
+    int sign, dec;
     node *first, *last;
 }number;
 
