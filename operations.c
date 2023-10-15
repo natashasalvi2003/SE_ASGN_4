@@ -2,6 +2,23 @@
 #include<stdlib.h>
 #include "operations.h"
 
+void decimalEqual(number *a, number *b) {
+	int i;
+	if(a->dec > b->dec) {
+		int diff = a->dec - b->dec;
+		for(i = 0; i < diff; i++) {
+			append(b, '0');
+			b->dec++;
+		}
+	}
+	else if(b->dec > a->dec) {
+		int diff = b->dec - a->dec;
+		for(i = 0; i < diff; i++) {
+			append(a, '0');
+			a->dec++;
+		}
+	}
+}
 
 // number *one;
 
@@ -53,6 +70,7 @@ number *add(number *a, number *b)
     // number *result;
     number *result=(number *)malloc(sizeof(number));
     initnumber(result);
+    decimalEqual(a, b);
     // int l=eqlength(a,b);
     if(a->sign != b->sign) 
     {
@@ -127,6 +145,7 @@ number *add(number *a, number *b)
             }
             
         }
+        result->dec = a->dec;
         // printf("a");
         if(carry!=0)
             push(result,carry);
@@ -138,6 +157,7 @@ number *add(number *a, number *b)
 
 int compare(number *a, number *b)
 {
+    decimalEqual(&a, &b);
     node *p, *q;
     int l1=length(*a);
     int l2=length(*b);
@@ -167,6 +187,7 @@ number *sub(number *a, number *b)
     number *result=(number *)malloc(sizeof(number));
     initnumber(result);
     int l=eqlength(a,b);
+    decimalEqual(a, b);
 
     if(a->sign != b->sign)
     {
@@ -259,6 +280,7 @@ number *sub(number *a, number *b)
             }
         }
     }
+    result->dec = a->dec;
     return result;
 }
 
@@ -425,6 +447,72 @@ number *multiply(number *a, number *b)
         result->sign=MINUS;
     return result;
 }
+
+
+number *multiply2(number *a, number *b) {
+	number *ans = (number *)malloc(sizeof(number));
+	initnumber(ans);
+	//checks if any one of the numbers is zero.
+	if((iszero(*a) == 0) || (iszero(*b) == 0)) {
+		append(ans, '0');
+		return ans;
+	}
+	int lengthdiff;
+	if(a->sign == b->sign) {
+		ans->sign = PLUS;
+		a->sign = b->sign = PLUS;
+	}
+	else {
+		ans->sign = MINUS;
+		a->sign = b->sign = PLUS;
+	}
+	lengthdiff = length(*a) - length(*b);
+	if(lengthdiff < 0) {
+		ans = multiply2(b, a);
+		return ans;
+	}
+	else {
+		node *t1, *t2;
+		int len_a = length(*a);
+		int len_b = length(*b);
+		int i, j, n1 = 0, n2 = 0;
+		int tempresult[2 * len_a];
+		for(i = 0; i < 2 *len_a; i++)
+			tempresult[i] = 0;
+		int k = 2 * len_a - 1;
+		t2 = b->last;
+		for(i = 0; i < len_b; i++) {
+			t1 = a->last;
+			int carry1 = 0, carry2 = 0;
+			for(j = k - i; j > len_a - 2; j--) {
+				if(t1 != NULL && t2 != NULL) {
+					n1 = t1->n * t2->n + carry1;
+					t1 = t1->prev;
+					carry1 = n1 / 10;
+					n1 = n1 % 10;
+					n2 = tempresult[j] + n1 + carry2;
+					carry2 = n2 / 10;
+					n2 = n2 % 10;
+					tempresult[j] = n2;
+				}
+				else {
+					break;
+				}
+			}
+			tempresult[j] = carry1 + carry2 + tempresult[j];
+			len_a--;
+			t2 = t2->prev;	
+		}
+		for(i= k; i >= len_a - 1 && i >= 0; i--) {
+			push(ans, tempresult[i]);
+		}
+		ans->dec = a->dec + b->dec;
+		return ans;
+	}
+}
+
+
+
 number *power(number *a,number*b)
 {
     int temp;
