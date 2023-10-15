@@ -522,12 +522,12 @@ number *power(number *a,number*b)
     one=(number *)malloc(sizeof(number));
     initnumber(one);
     append(one,'1');
-    if(iszero(*a)==0)
+    if(iszero(*a)==1)
     {
         append(result,'0');
         return result;
     }
-    if(iszero(*b)==0)
+    if(iszero(*b)==1)
     {
         append(result,'1');
         return result;
