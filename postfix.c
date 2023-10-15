@@ -143,8 +143,15 @@ void inToPost(char B[])
                         // printf("%c",t->first->n);
                     }
                     break;
+                case '.':
+                    temp1->dec = 0;
+                    int flag1 = 1;
                 default:
                     append(temp1,sym);
+                    if(flag1 == 1)
+                    {
+                        temp1->dec++;
+                    }
                     if(B[i+1] < '0' || B[i+1] > '9')
                     {
                         if(flag==1)
@@ -153,7 +160,7 @@ void inToPost(char B[])
                             flag=0;
                         }
                         postfix[j++]=temp1;
-                        
+                        flag1 = 0;
                         temp1=(number *)malloc(sizeof(number));
                         initnumber(temp1);
                     }
@@ -257,14 +264,14 @@ number *eval(number *C[])
                     break;
                 case 42:  //multiply
                     // printf("\nm");
-                    r=multiply(a2,a1);
+                    r=multiply2(a2,a1);
                     spush(&S1,r);
                     // printnumber(*r);
                     r=NULL;
                     break;
                 case 47:  //division
                     // printf("\nd");
-                    r=divide(a2,a1);
+                    r=divide2(a2,a1);
                     spush(&S1,r);
                     // printnumber(*r);
                     r=NULL;
