@@ -689,6 +689,8 @@ number *divide2(number *m, number *n)
 number *mod(number *a, number *b)
 {
     int s;
+    decimalEqual(a, b);
+    int a_dec = a->dec;
     number *quotient=(number *)malloc(sizeof(number));
     initnumber(quotient);
     number *result=(number *)malloc(sizeof(number));
@@ -702,34 +704,30 @@ number *mod(number *a, number *b)
         return result;
     }
 
-    if(a->sign==MINUS)
-        s=-1;
-    if(a->sign==PLUS)
-        s=1;
+    if(a->sign == MINUS) {
+		s = MINUS;
+		a->sign = b->sign = PLUS;
+	}
+	else {
+		s = PLUS;
+		a->sign = b->sign = PLUS;
+	}
     // printf("s=%d",s);
     
-    one=(number *)malloc(sizeof(number));
-    initnumber(one);
-    append(one,'1');
-
-    a->sign=PLUS;
-    b->sign=PLUS;
-
-    append(quotient,'0');
-    quotient->sign=PLUS;
-    
-    number *temp=(number *)malloc(sizeof(number));
-    initnumber(temp);
-    temp=a;
-    while((compare(temp,b)) >= 0) 
-    {
-        temp=sub(temp,b);
-        quotient=add(quotient,one);
-    }
-    // printnumber(*temp);
-    // quotient=divide(a,b);
-    // temp=multiply(quotient,b);
-    // result=sub(a,temp);
+    temp = division(a, b);
+	if(temp->dec != 0) {
+		int pos = length(*temp) - 1; 
+		while(temp->dec != 0) {
+			remov(temp, pos);
+			temp->dec--;
+			pos--;
+		}
+	}
+	temp = mult(temp, b);
+	ans = sub(a, temp);
+	ans->sign = tempsign;
+	ans->dec = a_dec;
+	return ans;
      
     if(s==1)
         temp->sign=PLUS;
