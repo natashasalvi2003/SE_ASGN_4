@@ -157,7 +157,7 @@ number *add(number *a, number *b)
 
 int compare(number *a, number *b)
 {
-    decimalEqual(&a, &b);
+    decimalEqual(a, b);
     node *p, *q;
     int l1=length(*a);
     int l2=length(*b);
@@ -604,7 +604,7 @@ number *divide(number *a, number *b)
 
 number *divide2(number *m, number *n)
 {
-    if(zeroNumber(*n) == 0) {
+    if(iszero(*n) == 0) {
 		printf("Dividing by Zero is not allowed.\n");
 		return NULL; 
 	}
@@ -618,11 +618,11 @@ number *divide2(number *m, number *n)
 		if(m->dec > 0)
 			m->dec--;
 		else
-			addDigit(m, '0');
+			append(m, '0');
 		if(n->dec > 0)
 			n->dec--;
 		else
-			addDigit(n, '0');
+			append(n, '0');
 		i++;
 	}
 	i = 9;
@@ -633,10 +633,10 @@ number *divide2(number *m, number *n)
 	pro = (number *)malloc(sizeof(number));
 	q = (number *)malloc(sizeof(number));
 	
-	initNumber(ans);
-	initNumber(c);
-	initNumber(q);
-	initNumber(d);
+	initnumber(ans);
+	initnumber(c);
+	initnumber(q);
+	initnumber(d);
 	if(m->sign == n->sign) {
 		q->sign = PLUS;
 		m->sign = n->sign = PLUS;
@@ -647,14 +647,14 @@ number *divide2(number *m, number *n)
 	}
 	node *p = m->first;
 	char ch = p->n + '0';
-	addDigit(d, ch);
+	append(d, ch);
 	while(q->dec < SCALE){
 		while(i >= 0){	
-			appendleft(c, i);
-			pro = mult(n, c);
+			push(c, i);
+			pro = multiply2(n, c);
 			ans = sub(d, pro);	
 			if(ans->sign != MINUS) {
-				addDigit(q, i + '0');
+				append(q, i + '0');
 				node *tmp = c->first;
 				free(tmp);
 				c->last = c->last = NULL;
@@ -671,11 +671,11 @@ number *divide2(number *m, number *n)
 		if(p->next != NULL) {
 			p = p->next;
 			ch = p->n + '0';
-			addDigit(d, ch);
+			append(d, ch);
 		}
 		else{	
 			q->dec++;	
-			addDigit(d, '0');
+			append(d, '0');
 		}
 		i = 9;
 		node *tmp = c->first;
