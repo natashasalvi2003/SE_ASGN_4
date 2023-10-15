@@ -20,4 +20,5 @@ void append(number *a, char ch);
 int length(number a);
 void printnumber(number a);
 void zeroRemov(number *a);
+void remov(number *a, int pos);
 // void appendop(number *a, char ch);
