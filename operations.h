@@ -15,3 +15,4 @@ int compare(number *a,number *b);
 number *sub1(number *a, number *b);
 number *power(number *a,number*b);
 number *mod(number *a, number *b);
+number *factorial(number *a);

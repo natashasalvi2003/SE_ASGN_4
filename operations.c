@@ -688,33 +688,25 @@ number *divide2(number *m, number *n)
 
 number *mod(number *a, number *b)
 {
-    int s;
-    decimalEqual(a, b);
-    int a_dec = a->dec;
-    number *quotient=(number *)malloc(sizeof(number));
-    initnumber(quotient);
-    number *result=(number *)malloc(sizeof(number));
-    initnumber(result);
-    
-    if(iszero(*b)==0)
-        return NULL;
-    if(iszero(*a)==0)
-    {
-        append(result,'0');
-        return result;
-    }
-
-    if(a->sign == MINUS) {
-		s = MINUS;
+    if(iszero(*b) == 0) {
+		return NULL;
+	}
+	int tempsign;
+	if(a->sign == MINUS) {
+		tempsign = MINUS;
 		a->sign = b->sign = PLUS;
 	}
 	else {
-		s = PLUS;
+		tempsign = PLUS;
 		a->sign = b->sign = PLUS;
 	}
-    // printf("s=%d",s);
-    
-    temp = division(a, b);
+	decimalEqual(a, b);
+	int a_dec = a->dec;
+	number *ans = (number *)malloc(sizeof(number));
+	number *temp = (number *)malloc(sizeof(number));
+	initnumber(ans);
+	initnumber(temp);
+	temp = divide2(a, b);
 	if(temp->dec != 0) {
 		int pos = length(*temp) - 1; 
 		while(temp->dec != 0) {
@@ -723,18 +715,28 @@ number *mod(number *a, number *b)
 			pos--;
 		}
 	}
-	temp = mult(temp, b);
+	temp = multiply2(temp, b);
 	ans = sub(a, temp);
 	ans->sign = tempsign;
 	ans->dec = a_dec;
 	return ans;
-     
-    if(s==1)
-        temp->sign=PLUS;
-    else if(s==-1)
-        temp->sign=MINUS;
-    return temp;
 }
 
+number *factorial(number *a) {
+	if(a->dec != 0 || a->sign == MINUS) {
+		exit(1);
+	}
+	number *ans = (number *)malloc(sizeof(number));
+	initnumber(ans);
+	append(ans, '1');
+	number *b = (number *)malloc(sizeof(number));
+	initnumber(b);
+	append(b, '1');
+	while(compare(a, b) > 0) {
+		ans = multiply2(a, ans);
+		a = sub(a, b);
+	}
+	return ans;
+}
 
 
