@@ -536,7 +536,7 @@ number *power(number *a,number*b)
     append(result,'1');
     while(iszero(*b)==1)
     {
-        result=multiply(result,a);
+        result=multiply2(result,a);
         b=sub(b,one);
         // printnumber(*b);
         // printf("\n");
